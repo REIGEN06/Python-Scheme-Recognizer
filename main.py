@@ -18,7 +18,8 @@ def prepare_file(image_jpg_path):
     image_jpg = Image.open(image_jpg_path)
     image_jpg_croped = image_jpg.crop((160, 40, image_jpg.width-1500, image_jpg.height-200))
     image_jpg_croped_resized = image_jpg_croped.resize((800, 420))
-    return f'{temp_dir.name}/doc_crop_resize.jpg', image_jpg_croped_resized
+    image_jpg_croped_resized_path = f'{temp_dir.name}/doc_crop_resize.jpg'
+    return image_jpg_croped_resized_path, image_jpg_croped_resized
 
 
 for image_jpg_path in pdf2jpg('pictures/doc.pdf'):
