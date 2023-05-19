@@ -13,6 +13,8 @@ class Image:
         plt.imshow(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
         plt.show()
     
-    def get_text(self, *language):
-        reader = easyocr.Reader(list(language), gpu=False)
-        return reader.readtext(self.image)
+    def get_text(self, languages):
+        reader = easyocr.Reader(languages, gpu=False)
+        return reader.readtext(self.image,
+                               contrast_ths=0.3,
+                               low_text=0.1)
