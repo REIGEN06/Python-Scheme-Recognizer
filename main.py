@@ -1,31 +1,37 @@
 import text_detection
 import pdf2image
-import os
 import tempfile
+import os
 from PIL import Image
 
 temp_dir = tempfile.TemporaryDirectory()
 
 def pdf2jpg(path):
-    pdf_file = pdf2image.convert_from_path(path)
+    pdf = pdf2image.convert_from_path(path)
     count = 0
-    for page in pdf_file:
+    for page in pdf:
         count += 1
-        print(temp_dir.name)
-        jpg_file_path = f'{temp_dir.name}/doc_{count}.jpg'
-        page.save(jpg_file_path, 'JPEG')
-        yield jpg_file_path
+        base_file_name = os.path.basename(path)
+        jpg_path = f'{temp_dir.name}/{base_file_name}{count}.jpg'
+        page.save(jpg_path, 'JPEG')
+        yield jpg_path
 
 
-for jpg_image_path in pdf2jpg('pictures/doc.pdf'):
-    image_jpg = Image.open(jpg_image_path)
-    image_jpg_croped = image_jpg.crop((160, 40, image_jpg.width-1500, image_jpg.height-200))
-    image_jpg_croped_resized = image_jpg_croped.resize((800, 420))
-    image_jpg_croped_resized_path = f'{temp_dir.name}/doc_crop_resize.jpg' 
-    image_jpg_croped_resized.save(image_jpg_croped_resized_path, optimize=True, quality=100)
+# TODO: crop doesn't work with other file sizes
+def prepare_file(image_jpg_path):
+    image_jpg = Image.open(image_jpg_path)
+    image_jpg = image_jpg.resize((800, 420))
+    image_jpg = image_jpg.crop((27, 20, image_jpg.width/2+150, image_jpg.height-50))
+    return image_jpg
 
-    image = text_detection.Image(image_jpg_croped_resized_path)
-    text = image.get_text()
+
+source_image_path = 'pictures/doc.pdf'
+for image_jpg_path in pdf2jpg(source_image_path):
+    image_jpg = prepare_file(image_jpg_path)
+    image_jpg.save(image_jpg_path, optimize=True, quality=100)
+
+    image = text_detection.Image(image_jpg_path)
+    text = image.get_text(languages=['en'])
     image.show_text(text)
 
 temp_dir.cleanup()
