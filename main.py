@@ -31,7 +31,7 @@ for image_jpg_path in pdf2jpg(source_image_path):
     image_jpg.save(image_jpg_path, optimize=True, quality=100)
 
     image = text_detection.Image(image_jpg_path)
-    text = image.get_text(languages=['en'])
+    text = image.get_text(languages=['ru'])
     image.show_text(text)
 
 temp_dir.cleanup()

@@ -15,6 +15,9 @@ class Image:
     
     def get_text(self, languages):
         reader = easyocr.Reader(languages, gpu=False)
+        allowlist='1234567890-АБВГХ,.'
         return reader.readtext(self.image,
-                               contrast_ths=0.3,
-                               low_text=0.1)
+                               low_text=0.05,
+                               allowlist=allowlist,
+                               mag_ratio=2,
+                               )
