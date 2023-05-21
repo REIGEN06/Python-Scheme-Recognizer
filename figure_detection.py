@@ -9,21 +9,20 @@ def rotate_image(image):
     return image
 
 
-def calculate_image_hash(file_name):
-    image = __prepare_image(file_name)
+def calculate_image_hash(image):
+    image = __preprocess_image(image)
     pixel_mean = image.mean()
-    image = cv2.threshold(image, pixel_mean, 255, 0) # Бинаризация по порогу
+    _, image = cv2.threshold(image, pixel_mean, 255, 0) # Бинаризация по порогу
 
-    hash = __calculate_prepared_hash(image)
+    hash = __calculate_preprocessed_image_hash(image)
     return hash
 
-def __prepare_image(file_name):
-    image = cv2.imread(file_name)
+def __preprocess_image(image):
     image = cv2.resize(image, (16,16), interpolation = cv2.INTER_AREA)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) #Переведем в черно-белый формат
     return image
 
-def __calculate_prepared_hash(image):
+def __calculate_preprocessed_image_hash(image):
     hash=[]
     for x in range(16):
         for y in range(16):
@@ -43,13 +42,16 @@ def count_hash_difference(hash1, hash2):
 
 
 if __name__ == '__main__':
+    image_path = 'pictures/doc.jpg'
+
     images = []
-    image = cv2.imread('pictures/doc_copy.jpg')
+    image = cv2.imread(image_path)
     for _ in range(4):
         images.append(image)
         image = rotate_image(image)
 
-    hash1 = calculate_image_hash('pictures/doc.jpg')
+    image = cv2.imread(image_path)
+    hash1 = calculate_image_hash(image)
     for hash2 in map(calculate_image_hash, images):
         if count_hash_difference(hash1, hash2) < 80:
             print('Совпадение')
