@@ -18,7 +18,7 @@ def pdf2jpg(path):
 
 
 # TODO: crop doesn't work with other file sizes
-def prepare_file(image_jpg_path):
+def preprocess_image(image_jpg_path):
     image_jpg = Image.open(image_jpg_path)
     image_jpg = image_jpg.resize((800, 420))
     image_jpg = image_jpg.crop((27, 20, image_jpg.width/2+150, image_jpg.height-50))
@@ -27,11 +27,11 @@ def prepare_file(image_jpg_path):
 
 source_image_path = 'pictures/doc.pdf'
 for image_jpg_path in pdf2jpg(source_image_path):
-    image_jpg = prepare_file(image_jpg_path)
+    image_jpg = preprocess_image(image_jpg_path)
     image_jpg.save(image_jpg_path, optimize=True, quality=100)
 
     image = text_detection.Image(image_jpg_path)
-    text = image.get_text(languages=['en'])
+    text = image.get_text(languages=['ru'])
     image.show_text(text)
 
 temp_dir.cleanup()
